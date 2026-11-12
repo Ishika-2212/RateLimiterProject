@@ -1,0 +1,39 @@
+
+FROM debian:bookworm-slim
+
+# Install C++ compiler and dependencies
+RUN apt-get update && apt-get install -y \
+    g++ \
+    git \
+    make \
+    libasio-dev \
+    libssl-dev \
+    zlib1g-dev \
+    libhiredis-dev \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Crow
+RUN git clone --depth 1 --branch v1.3.4 \
+    https://github.com/CrowCpp/Crow.git /tmp/Crow \
+    && cp -r /tmp/Crow/include/crow /usr/local/include/ \
+    && cp /tmp/Crow/include/crow.h /usr/local/include/ \
+    && rm -rf /tmp/Crow
+
+WORKDIR /app
+
+# Copy project files
+COPY . .
+
+# Compile the C++ backend
+RUN g++ -std=c++17 -O2 -pthread \
+    main.cpp \
+    FixedWindow.cpp \
+    SlidingWindow.cpp \
+    TokenBucket.cpp \
+    LeakyBucket.cpp \
+    -o server \
+    -lhiredis
+
+# Start the server
+CMD ["./server"]
