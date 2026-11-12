@@ -1,6 +1,7 @@
 
 #include "LeakyBucket.h"
 #include <hiredis/hiredis.h>
+#include <cstdlib>
 #include <string>
 
 LeakyBucket::LeakyBucket(int capacity, int leakRate)
@@ -10,7 +11,16 @@ LeakyBucket::LeakyBucket(int capacity, int leakRate)
 
 bool LeakyBucket::allowRequest(const std::string& clientId)
 {
-    redisContext* redis = redisConnect("127.0.0.1", 6379);
+    const char* redisHost = std::getenv("REDIS_HOST");
+const char* redisPortEnv = std::getenv("REDIS_PORT");
+
+if (redisHost == nullptr) {
+    redisHost = "127.0.0.1";
+}
+
+int redisPort = redisPortEnv ? std::stoi(redisPortEnv) : 6379;
+
+redisContext* redis = redisConnect(redisHost, redisPort);
 
     if (redis == nullptr || redis->err)
     {

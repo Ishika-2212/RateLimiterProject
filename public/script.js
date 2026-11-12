@@ -1,6 +1,6 @@
 
 let selectedAlgorithm = "fixed";
-
+const API_BASE_URL = "https://distributed-ratelimiter.netlify.app";
 let totalRequests = 0;
 let allowedRequests = 0;
 let deniedRequests = 0;

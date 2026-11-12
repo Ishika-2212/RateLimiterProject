@@ -1,5 +1,7 @@
 
 #include "crow.h"
+#include <cstdlib>
+#include <string>
 #include "FixedWindow.h"
 #include "SlidingWindow.h"
 #include "TokenBucket.h"
@@ -17,7 +19,8 @@ int main()
     SlidingWindow slidingLimiter(5, 60);
     TokenBucket tokenLimiter(5, 1);
     LeakyBucket leakyLimiter(5, 1);
-    CROW_ROUTE(app, "/")([](){
+    CROW_ROUTE(app, "/")([]()
+                         {
 
     std::ifstream file("public/index.html");
 
@@ -31,9 +34,9 @@ int main()
     crow::response response(buffer.str());
     response.set_header("Content-Type", "text/html");
 
-    return response;
-});
-CROW_ROUTE(app, "/style.css")([](){
+    return response; });
+    CROW_ROUTE(app, "/style.css")([]()
+                                  {
 
     std::ifstream file("public/style.css");
 
@@ -47,9 +50,9 @@ CROW_ROUTE(app, "/style.css")([](){
     crow::response response(buffer.str());
     response.set_header("Content-Type", "text/css");
 
-    return response;
-});
- CROW_ROUTE(app, "/script.js")([](){
+    return response; });
+    CROW_ROUTE(app, "/script.js")([]()
+                                  {
 
     std::ifstream file("public/script.js");
 
@@ -63,12 +66,11 @@ CROW_ROUTE(app, "/style.css")([](){
     crow::response response(buffer.str());
     response.set_header("Content-Type", "application/javascript");
 
-    return response;
-});
+    return response; });
 
     CROW_ROUTE(app, "/count/<string>")
-    ([&limiter](const std::string& clientId)
-    {
+    ([&limiter](const std::string &clientId)
+     {
         bool allowed = limiter.allowRequest(clientId);
 
         if (!allowed)
@@ -82,12 +84,11 @@ CROW_ROUTE(app, "/style.css")([](){
         return crow::response(
             200,
             "Request allowed! Client: " + clientId
-        );
-    });
+        ); });
 
     CROW_ROUTE(app, "/sliding/<string>")
-    ([&slidingLimiter](const std::string& clientId)
-    {
+    ([&slidingLimiter](const std::string &clientId)
+     {
         bool allowed = slidingLimiter.allowRequest(clientId);
 
         if (!allowed)
@@ -101,13 +102,11 @@ CROW_ROUTE(app, "/style.css")([](){
         return crow::response(
             200,
             "Sliding Window: Request allowed! Client: " + clientId
-        );
-    });
+        ); });
 
-
-CROW_ROUTE(app, "/token/<string>")
-([&tokenLimiter](const std::string& clientId)
-{
+    CROW_ROUTE(app, "/token/<string>")
+    ([&tokenLimiter](const std::string &clientId)
+     {
     bool allowed = tokenLimiter.allowRequest(clientId);
 
     if (!allowed)
@@ -121,13 +120,11 @@ CROW_ROUTE(app, "/token/<string>")
     return crow::response(
         200,
         "Token Bucket: Request allowed! Client: " + clientId
-    );
-});
+    ); });
 
-
-CROW_ROUTE(app, "/leaky/<string>")
-([&leakyLimiter](const std::string& clientId)
-{
+    CROW_ROUTE(app, "/leaky/<string>")
+    ([&leakyLimiter](const std::string &clientId)
+     {
     bool allowed = leakyLimiter.allowRequest(clientId);
 
     if (!allowed)
@@ -141,12 +138,13 @@ CROW_ROUTE(app, "/leaky/<string>")
     return crow::response(
         200,
         "Leaky Bucket: Request allowed! Client: " + clientId
-    );
-});
+    ); });
 
     std::cout << "Starting C++ server on port 18080...\n";
 
-    app.port(18080).multithreaded().run();
+    const char *portEnv = std::getenv("PORT");
+    int port = portEnv ? std::stoi(portEnv) : 18080;
+    app.port(port).multithreaded().run();
 
     return 0;
 }
