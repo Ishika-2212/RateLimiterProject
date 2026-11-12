@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Limiter Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <aside class="sidebar">
+            <h2>⚡ RateLimit</h2>
+
+            <nav>
+                <a href="#" class="active">Dashboard</a>
+                <a href="#algorithms">Algorithms</a>
+                <a href="#tester">Request Tester</a>
+                <a href="#history">Request History</a>
+            </nav>
+
+            <div class="server-status">
+                <span class="status-dot"></span>
+                <span>Server status</span>
+                <strong id="serverStatus">Checking...</strong>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <header class="topbar">
+                <div>
+                    <h1>Dashboard</h1>
+                    <p>Monitor and manage your rate limiter</p>
+                </div>
+                <div class="redis-status">
+                    Redis: <strong id="redisStatus">Checking...</strong>
+                </div>
+            </header>
+
+            <section class="stats">
+
+                <div class="stat-card">
+                    <p>Total Requests</p>
+                    <h2 id="totalRequests">—</h2>
+                </div>
+
+                <div class="stat-card">
+                    <p>Allowed Requests</p>
+                    <h2 id="allowedRequests">—</h2>
+                </div>
+
+                <div class="stat-card">
+                    <p>Denied Requests</p>
+                    <h2 id="deniedRequests">—</h2>
+                </div>
+
+                <div class="stat-card">
+                    <p>Active Algorithms</p>
+                    <h2>4</h2>
+                </div>
+
+            </section>
+
+            <section id="algorithms" class="section">
+                <h2>Rate Limiting Algorithms</h2>
+                <p>Select an algorithm to test</p>
+
+                <div class="algorithm-grid">
+
+                    <button class="algorithm-card selected"
+                        data-algorithm="fixed">
+                        <h3>Fixed Window</h3>
+                        <p>Limits requests within a fixed time window.</p>
+                    </button>
+
+                    <button class="algorithm-card"
+                        data-algorithm="sliding">
+                        <h3>Sliding Window</h3>
+                        <p>Tracks requests over a moving time window.</p>
+                    </button>
+
+                    <button class="algorithm-card"
+                        data-algorithm="token">
+                        <h3>Token Bucket</h3>
+                        <p>Uses tokens to control request flow.</p>
+                    </button>
+
+                    <button class="algorithm-card"
+                        data-algorithm="leaky">
+                        <h3>Leaky Bucket</h3>
+                        <p>Processes requests at a steady rate.</p>
+                    </button>
+
+                </div>
+            </section>
+
+            <section id="tester" class="section">
+                <h2>Request Tester</h2>
+
+                <div class="tester-card">
+
+                    <label for="clientId">Client ID</label>
+
+                    <input
+                        type="text"
+                        id="clientId"
+                        placeholder="Enter client ID"
+                        value="client1"
+                    >
+
+                    <p>
+                        Selected algorithm:
+                        <strong id="selectedAlgorithm">Fixed Window</strong>
+                    </p>
+
+                    <button id="sendRequest">
+                        Send Request
+                    </button>
+
+                    <button id="sendMultiple">
+                        Send 10 Requests
+                    </button>
+
+                    <div id="requestResult">
+                        Your request results will appear here.
+                    </div>
+
+                </div>
+            </section>
+
+            <section id="history" class="section">
+                <h2>Recent Request History</h2>
+
+                <div class="history-card">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client ID</th>
+                                <th>Algorithm</th>
+                                <th>Status</th>
+                                <th>Time</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="historyBody">
+                            <tr>
+                                <td colspan="4">
+                                    No requests yet.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
